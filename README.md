@@ -127,6 +127,27 @@ let out = try model.prediction(from: MLDictionaryFeatureProvider(dictionary: [
 // out: "encoded" [1, 768, 840] — читать тоже через .strides.
 ```
 
+## Квантизация / Quantization
+
+Меряли data-free сжатие весов той же методикой (расхождение слов против
+fp32-эталона на 339-словной выборке живой речи). We measured data-free
+weight compression with the same word-diff methodology vs the fp32 reference.
+
+| Вариант | Размер | Расхождение слов | Задержка (5 c / 30 c) | Вердикт |
+|---|---|---|---|---|
+| fp16 (базовый) | 423 МБ | 2.4% | 161 / 294 мс | ✅ рекомендуем |
+| **int8 linear per-channel** | **212 МБ** | **2.4%** | 155 / 293 мс | ✅ **бесплатно по качеству** |
+| 6-bit palettization (grouped/16) | 162 МБ | 4.1% | — | ⚠️ на грани |
+| 4-bit palettization (grouped/16) | 108 МБ | 14.5% | — | ❌ разваливает текст |
+| 4-bit palettization (per-tensor) | 107 МБ | 17.7% | — | ❌ |
+
+**Выводы:** int8 — половина размера бесплатно
+([`gigaam-v3-encoder-ane-int8.mlpackage.zip`](https://github.com/IsaacClarke2/gigaam-v3-coreml/releases/download/v3.0/gigaam-v3-encoder-ane-int8.mlpackage.zip),
+⚠️ требует macOS 15+). Честный q4 без потерь этой модели data-free
+не даётся — нужна калибровка/QAT. TL;DR: int8 halves the size for free
+(macOS 15+); honest q4 needs calibration or QAT — data-free it wrecks
+the transcript.
+
 ## Лицензия / License
 
 MIT — наследована от GigaAM (© SberDevices) и ONNX-экспорта istupakov.
