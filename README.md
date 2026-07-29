@@ -143,10 +143,10 @@ weight compression with the same word-diff methodology vs the fp32 reference.
 
 **Выводы:** int8 — половина размера бесплатно
 ([`gigaam-v3-encoder-ane-int8.mlpackage.zip`](https://github.com/IsaacClarke2/gigaam-v3-coreml/releases/download/v3.0/gigaam-v3-encoder-ane-int8.mlpackage.zip),
-⚠️ требует macOS 15+). Честный q4 без потерь этой модели data-free
-не даётся — нужна калибровка/QAT. TL;DR: int8 halves the size for free
-(macOS 15+); honest q4 needs calibration or QAT — data-free it wrecks
-the transcript.
+работает на macOS 14+, как и базовая). Честный q4 без потерь этой
+модели data-free не даётся — нужна калибровка/QAT. TL;DR: int8 halves
+the size for free (macOS 14+); honest q4 needs calibration or QAT —
+data-free it wrecks the transcript.
 
 ## Лицензия / License
 
